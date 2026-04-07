@@ -118,9 +118,10 @@ class BlueGreenLambdaLinearStack(cdk.Stack):
         #   LINEAR_10PERCENT_EVERY_3_MINUTES
         #   LINEAR_10PERCENT_EVERY_10_MINUTES
         #   ALL_AT_ONCE → instant 100% shift, no gradual window
-        codedeploy.LambdaDeploymentGroup(
+        deployment_group=codedeploy.LambdaDeploymentGroup(
             self, "DeploymentGroup",
             application=application,
+            deployment_group_name="bg-lambda-linear-dg",
             alias=alias,
             deployment_config=codedeploy.LambdaDeploymentConfig.LINEAR_10_PERCENT_EVERY_1_MINUTE,
             pre_hook=pre_hook,
@@ -146,11 +147,13 @@ class BlueGreenLambdaLinearStack(cdk.Stack):
             assumed_by=iam.ServicePrincipal("codebuild.amazonaws.com"),
         )
         artifact_bucket.grant_read_write(build_role)
+        artifact_bucket.grant_read_write(deployment_group.role)
         fn.grant_invoke(build_role)
         build_role.add_to_policy(iam.PolicyStatement(
             actions=[
                 "logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents",
                 "lambda:UpdateFunctionCode", "lambda:PublishVersion", "lambda:GetFunction",
+                "lambda:GetFunctionConfiguration", "lambda:GetAlias"
             ],
             resources=["*"],
         ))
@@ -193,8 +196,8 @@ class BlueGreenLambdaLinearStack(cdk.Stack):
                     "              Properties:",
                     "                Name: $FUNCTION_NAME",
                     "                Alias: live",
-                    "                CurrentVersion: $CURRENT_ARN",
-                    "                TargetVersion: $NEW_ARN",
+                    "                CurrentVersion: $CURRENT_VERSION",
+                    "                TargetVersion: $NEW_VERSION",
                     "        EOF",
                     "artifacts:",
                     "  files:",
