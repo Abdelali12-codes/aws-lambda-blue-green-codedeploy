@@ -252,7 +252,7 @@ class BlueGreenLambdaLinearStack(cdk.Stack):
                             ],
                             configuration={
                                 "Owner": "Abdelali12-codes",
-                                "Repo": "bg-lambda-linear-app",
+                                "Repo": "aws-lambda-blue-green-codedeploy",
                                 "Branch": "master",
                                 "OAuthToken": cdk.SecretValue.secrets_manager("github-access-token").unsafe_unwrap(),
                                 "PollForSourceChanges": False,
