@@ -179,6 +179,7 @@ class BlueGreenLambdaLinearStack(cdk.Stack):
                     "    commands:",
                     "      - cd app && zip -r ../function.zip . && cd ..",
                     "      - aws lambda update-function-code --function-name $FUNCTION_NAME --zip-file fileb://function.zip",
+                    "      - aws lambda wait function-updated --function-name $FUNCTION_NAME",
                     "      - NEW_VERSION=$(aws lambda publish-version --function-name $FUNCTION_NAME --query Version --output text)",
                     "      - NEW_ARN=$(aws lambda get-function --function-name $FUNCTION_NAME --qualifier $NEW_VERSION --query Configuration.FunctionArn --output text)",
                     "      - CURRENT_VERSION=$(aws lambda get-alias --function-name $FUNCTION_NAME --name live --query FunctionVersion --output text)",
