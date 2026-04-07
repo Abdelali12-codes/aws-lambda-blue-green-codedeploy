@@ -1,2 +1,2 @@
 def handler(event, context):
-    return {"statusCode": 200, "body": "blue deployment"}
+    return {"statusCode": 200, "body": "green deployment"}
