@@ -46,6 +46,7 @@ class BlueGreenLambdaLinearStack(cdk.Stack):
             self, "Fn",
             runtime=lambda_.Runtime.PYTHON_3_12,
             handler="index.handler",
+            function_name="bg-lambda-linear-fn",
             code=lambda_.Code.from_inline(
                 "def handler(event, context):\n"
                 "    return {'statusCode': 200, 'body': 'v1-blue'}\n"
@@ -121,7 +122,7 @@ class BlueGreenLambdaLinearStack(cdk.Stack):
             self, "DeploymentGroup",
             application=application,
             alias=alias,
-            deployment_config=codedeploy.LambdaDeploymentConfig.LINEAR_10PERCENT_EVERY_1_MINUTE,
+            deployment_config=codedeploy.LambdaDeploymentConfig.LINEAR_10_PERCENT_EVERY_1_MINUTE,
             pre_hook=pre_hook,
             alarms=[errors_alarm, throttles_alarm],
             auto_rollback=codedeploy.AutoRollbackConfig(
@@ -204,6 +205,7 @@ class BlueGreenLambdaLinearStack(cdk.Stack):
         # ── Pipeline role ───────────────────────────────────────────────
         pipeline_role = iam.Role(
             self, "PipelineRole",
+            role_name="bg-lambda-linear-pipeline-role",
             assumed_by=iam.ServicePrincipal("codepipeline.amazonaws.com"),
         )
         artifact_bucket.grant_read_write(pipeline_role)
